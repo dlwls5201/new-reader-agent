@@ -49,8 +49,61 @@ class TranslatorCrew:
             verbose=True,
         )
 
-TranslatorCrew().assemble_crew().kickoff(
-    inputs={
-       "sentence": "I'm Nico and I like to ride my bicicle in Napoli", 
-    }
-)
+# TranslatorCrew().assemble_crew().kickoff(
+#     inputs={
+#        "sentence": "I'm Nico and I like to ride my bicicle in Napoli", 
+#     }
+# )
+
+@CrewBase
+class NewsReaderAgent:
+    agents_config = 'config/agents_news.yaml'
+    tasks_config = 'config/tasks_news.yaml'
+
+    @agent
+    def news_hunter_agent(self):
+        return Agent(
+            config=self.agents_config["news_hunter_agent"],
+        )
+
+    @agent
+    def summarizer_agent(self):
+        return Agent(
+            config=self.agents_config["summarizer_agent"],
+        )
+
+    @agent
+    def curator_agent(self):
+        return Agent(
+            config=self.agents_config["curator_agent"],
+        )
+
+    @task
+    def content_harvesting_task(self):
+        return Task(
+            config=self.tasks_config["content_harvesting_task"],
+        )
+
+    @task
+    def summarization_task(self):
+        return Task(
+            config=self.tasks_config["summarization_task"],
+        )
+
+    @task
+    def final_report_assembly_task(self):
+        return Task(
+            config=self.tasks_config["final_report_assembly_task"],
+        )
+
+    @crew
+    def crew(self):
+        return Crew(
+
+            tasks=self.tasks,
+            agents=self.agents,
+            verbose=True,
+        )
+
+
+NewsReaderAgent().crew().kickoff()
